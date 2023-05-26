@@ -93,4 +93,34 @@ SMA:                            ; 如果不满足条件JA，则执行此处的�
 LOOPP:                          ; 循环的末尾
     INC SI                      ; 将SI寄存器的值加1，用于下一次循环访问WYD数组中的下一个元素
     LOOP CMPP                   ; 循环次数减1，如果不为0，则跳转到
+MOV AL, BH                  ; 将最大值存储在AL寄存器中
+MOV AH, 0                   ; 清空AH寄存器
+
+MOV ES, RESULT              ; 将结果段RESULT的基地址加载到寄存器ES中
+MOV [MAX_NUM], AL           ; 将AL寄存器中的值存储到MAX_NUM中
+
+MOV AL, BL                  ; 将最小值存储在AL寄存器中
+MOV AH, 0                   ; 清空AH寄存器
+MOV [MIN_NUM], AL           ; 将AL寄存器中的值存储到MIN_NUM中
+
+MOV DX, OFFSET MAX_MSG      ; 将最大值的消息的偏移地址存储在DX寄存器中
+MOV AH, 09H                 ; 设置功能号为09H，表示输出字符串
+INT 21H                     ; 调用21H中断，输出最大值的消息
+
+MOV DL, [MAX_NUM]           ; 将最大值加载到DL寄存器中
+ADD DL, 30H                 ; 将DL寄存器的值加上30H，将其转换为ASCII码表示的字符
+MOV AH, 02H                 ; 设置功能号为02H，表示输出字符
+INT 21H                     ; 调用21H中断，输出最大值
+
+MOV DX, OFFSET MIN_MSG      ; 将最小值的消息的偏移地址存储在DX寄存器中
+MOV AH, 09H                 ; 设置功能号为09H，表示输出字符串
+INT 21H                     ; 调用21H中断，输出最小值的消息
+
+MOV DL, [MIN_NUM]           ; 将最小值加载到DL寄存器中
+ADD DL, 30H                 ; 将DL寄存器的值加上30H，将其转换为ASCII码表示的字符
+MOV AH, 02H                 ; 设置功能号为02H，表示输出字符
+INT 21H                     ; 调用21H中断，输出最小值
+
+MOV AH, 4CH                 ; 将4CH存储到AH寄存器中，表示程序结束的功能
+INT 21H                     ; 调用21H中断，结束程序
 
