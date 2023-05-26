@@ -1,0 +1,104 @@
+Microsoft (R) Macro Assembler Version 6.11		    05/26/23 00:22:05
+tempfile.asm						     Page 1 - 1
+
+
+ 0000				DATAS SEGMENT
+ 0000 54 68 65 20 72 65		MES DB 'The result z is:$'
+       73 75 6C 74 20 7A
+       20 69 73 3A 24
+ 0011 65A1			XL DW 65A1H
+ 0013 0015			XH DW 0015H
+ 0015 B79D			YL DW 0B79DH
+ 0017 0021			YH DW 0021H
+ 0019				DATAS ENDS
+
+ 0000				STACKS SEGMENT
+ 0000				STACKS ENDS
+
+ 0000				CODES SEGMENT
+					ASSUME CS:CODES,DS:DATAS,SS:STACKS
+ 0000				START:
+ 0000  B8 ---- R			MOV AX,DATAS
+ 0003  8E D8			 	MOV DS,AX
+ 0005  BA 0000 R		    MOV DX,OFFSET MES
+ 0008  B4 09				MOV AH,09H
+ 000A  CD 21				INT 21H
+ 000C  E8 000F				CALL COMPUTE 
+ 000F  53				PUSH BX
+ 0010  E8 001C			 	CALL LIST_BX 
+ 0013  5B				POP BX
+ 0014  8B C3				MOV AX,BX
+ 0016  E8 0016			 	CALL LIST_BX 
+ 0019  B8 4C00				MOV AX,4C00H
+ 001C  CD 21				INT 21H
+					
+ 001E				COMPUTE PROC
+ 001E  A1 0011 R		 	MOV AX,XL
+ 0021  03 06 0015 R			ADD AX,YL 
+ 0025  8B D8				MOV BX,AX 
+ 0027  A1 0013 R			MOV AX,XH
+ 002A  13 06 0017 R		 	ADC AX,YH 
+ 002E  C3				RET
+ 002F				COMPUTE ENDP
+
+ 002F				LIST_BX PROC 
+ 002F  B5 04			 	MOV CH,4
+ 0031  B1 04			 	MOV CL,4
+ 0033  8B D8			 	MOV BX,AX
+ 0035				NEXT:
+ 0035  D3 C3				ROL BX,CL
+ 0037  8A D3			 	MOV DL,BL
+ 0039  80 E2 0F			 	AND DL,0FH
+ 003C  80 C2 30			 	ADD DL,30H
+ 003F  80 FA 39			 	CMP DL,39H
+ 0042  7E 03			 	JLE PRINT
+ 0044  80 C2 07			 	ADD DL,7
+ 0047				PRINT: 
+ 0047  B4 02				MOV AH,2H 
+ 0049  CD 21			 	INT 21H
+ 004B  FE CD			 	DEC CH
+ 004D  75 E6			 	JNZ NEXT
+ 004F  C3			 	RET
+ 0050				LIST_BX ENDP
+ 0050				CODES ENDS
+				    END START
+
+
+Microsoft (R) Macro Assembler Version 6.11		    05/26/23 00:22:05
+tempfile.asm						     Symbols 2 - 1
+
+
+
+
+Segments and Groups:
+
+                N a m e                 Size     Length   Align   Combine Class
+
+CODES  . . . . . . . . . . . . .	16 Bit	 0050	  Para	  Private 
+DATAS  . . . . . . . . . . . . .	16 Bit	 0019	  Para	  Private 
+STACKS . . . . . . . . . . . . .	16 Bit	 0000	  Para	  Private 
+
+
+Procedures,  parameters and locals:
+
+                N a m e                 Type     Value    Attr
+
+COMPUTE  . . . . . . . . . . . .	P Near	 001E	  CODES	Length= 0011 Public
+LIST_BX  . . . . . . . . . . . .	P Near	 002F	  CODES	Length= 0021 Public
+  NEXT . . . . . . . . . . . . .	L Near	 0035	  CODES	
+  PRINT  . . . . . . . . . . . .	L Near	 0047	  CODES	
+
+
+Symbols:
+
+                N a m e                 Type     Value    Attr
+
+MES  . . . . . . . . . . . . . .	Byte	 0000	  DATAS	
+START  . . . . . . . . . . . . .	L Near	 0000	  CODES	
+XH . . . . . . . . . . . . . . .	Word	 0013	  DATAS	
+XL . . . . . . . . . . . . . . .	Word	 0011	  DATAS	
+YH . . . . . . . . . . . . . . .	Word	 0017	  DATAS	
+YL . . . . . . . . . . . . . . .	Word	 0015	  DATAS	
+
+	   0 Warnings
+	   0 Errors

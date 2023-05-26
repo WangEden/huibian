@@ -1,0 +1,78 @@
+Microsoft (R) Macro Assembler Version 6.11		    05/26/23 00:20:22
+tempfile.asm						     Page 1 - 1
+
+
+ 0000				DATAS SEGMENT
+ 0000 48 45 4C 4C 4F 2C		    MSR DB "HELLO,WORLD!$" 
+       57 4F 52 4C 44 21
+       24
+ 000D = 000D				LEN EQU $ - MSR
+ 000D				DATAS ENDS
+
+ 0000				EXDA SEGMENT 
+ 0000  000D [				MSD DB LEN DUP(?) 
+        00
+       ]
+ 000D				EXDA ENDS
+
+ 0000				STACKS SEGMENT
+ 0000  0014 [				DW 20 DUP(?)
+        0000
+       ]
+ 0028				STACKS ENDS
+
+ 0000				CODES SEGMENT
+				    ASSUME CS:CODES,DS:DATAS,ES:EXDA,SS:STACKS
+ 0000				START:
+ 0000  B8 ---- R		    MOV AX,DATAS
+ 0003  8E D8			    MOV DS,AX
+ 0005  B8 ---- R		    MOV AX, EXDA 
+ 0008  8E C0				MOV ES,AX 
+ 000A  BE 0000 R		    MOV SI,OFFSET MSR ;设置SI 
+ 000D  BF 0000 R			MOV DI,OFFSET MSD ;设置DI 
+ 0010  B9 000D				MOV CX, LEN 
+ 0013				NEXT: 
+ 0013  8A 04				MOV AL,[SI] ;开始传输数据
+ 0015  26: 88 05			MOV ES:[DI],AL
+ 0018  46				INC SI 
+ 0019  47				INC DI 
+ 001A  49				DEC CX 
+ 001B  75 F6				JNZ NEXT 
+ 001D  06				PUSH ES 
+ 001E  1F				POP DS ;将附加段寄存器的段值赋给数据段寄存器
+ 001F  BA 0000 R			MOV DX, OFFSET MSD 
+ 0022  B4 09				MOV AH, 9 
+ 0024  CD 21				INT 21H 
+ 0026  B8 4C00				MOV AX, 4C00H ;利用DOS功能调用返回DOS状态
+ 0029  CD 21				INT 21H
+ 002B				CODES ENDS
+				    END START
+
+Microsoft (R) Macro Assembler Version 6.11		    05/26/23 00:20:22
+tempfile.asm						     Symbols 2 - 1
+
+
+
+
+Segments and Groups:
+
+                N a m e                 Size     Length   Align   Combine Class
+
+CODES  . . . . . . . . . . . . .	16 Bit	 002B	  Para	  Private 
+DATAS  . . . . . . . . . . . . .	16 Bit	 000D	  Para	  Private 
+EXDA . . . . . . . . . . . . . .	16 Bit	 000D	  Para	  Private 
+STACKS . . . . . . . . . . . . .	16 Bit	 0028	  Para	  Private 
+
+
+Symbols:
+
+                N a m e                 Type     Value    Attr
+
+LEN  . . . . . . . . . . . . . .	Number	 000Dh	 
+MSD  . . . . . . . . . . . . . .	Byte	 0000	  EXDA	
+MSR  . . . . . . . . . . . . . .	Byte	 0000	  DATAS	
+NEXT . . . . . . . . . . . . . .	L Near	 0013	  CODES	
+START  . . . . . . . . . . . . .	L Near	 0000	  CODES	
+
+	   0 Warnings
+	   0 Errors

@@ -1,0 +1,85 @@
+Microsoft (R) Macro Assembler Version 6.11		    05/26/23 08:36:39
+tempfile.asm						     Page 1 - 1
+
+
+ 0000				DATAS SEGMENT
+					;此处输入数据段代码
+ 0000 49 6E 70 75 74 20		    msg1 db 'Input a character:', 0ah, 0dh, '$'
+       61 20 63 68 61 72
+       61 63 74 65 72 3A
+       0A 0D 24
+ 0015 0A 0D 49 74 73 20		    msg2 db 0ah, 0dh, 'Its ASCII hexadecimal form: ', 0ah, 0dh, '$'
+       41 53 43 49 49 20
+       68 65 78 61 64 65
+       63 69 6D 61 6C 20
+       66 6F 72 6D 3A 20
+       0A 0D 24
+ 0036 00			    xx db ?
+ 0037				DATAS ENDS
+
+ 0000				CODES SEGMENT
+				    ASSUME CS:CODES,DS:DATAS
+ 0000				START:
+ 0000  B8 ---- R		    MOV AX,DATAS
+ 0003  8E D8			    MOV DS,AX
+				    ;此处输入代码段代码
+ 0005  BA 0000 R		    mov dx, offset msg1
+ 0008  B4 09			    MOV AH,09H
+ 000A  CD 21			    INT 21H; 显示msg1
+ 000C  B4 01			    mov ah, 01h
+ 000E  CD 21			    int 21h; 键盘输入字符
+ 0010  BF 0036 R		    mov di, offset xx
+ 0013  88 05			    mov [di], al; 写入字符的ASCII码
+ 0015  B5 02			    mov ch, 2
+ 0017  B1 04			    mov cl, 4
+ 0019  BE 0036 R		    mov si, offset xx
+ 001C  8A 1C			    mov bl, [si]; 把字符的值存储到bl
+ 001E  BA 0015 R		    mov dx, offset msg2
+ 0021  B4 09			    mov ah, 09h
+ 0023  CD 21			    int 21h; 显示msg2
+ 0025				next:
+ 0025  D2 CB				ror bl, cl
+ 0027  B2 0F				mov dl, 0fh
+ 0029  22 D3				and dl, bl; 第一次取高四位，第二次取第四位
+ 002B  80 FA 0A				cmp dl, 0ah
+ 002E  7C 03				jl addz; 小于A则跳过+7这一步
+ 0030  80 C2 07				add dl, 07h
+ 0033					addz:
+ 0033  80 C2 30					add dl, 30h
+ 0036  B4 02					mov ah, 02h
+ 0038  CD 21					int 21h; 第一次显示高四位的ascii码，第二次显示第四位的ascii码
+ 003A  FE CD					dec ch
+ 003C  75 E7					jnz next
+ 003E  B4 4C				mov ah, 4ch
+ 0040  CD 21				int 21h
+ 0042				CODES ENDS
+				    END START
+
+
+Microsoft (R) Macro Assembler Version 6.11		    05/26/23 08:36:39
+tempfile.asm						     Symbols 2 - 1
+
+
+
+
+Segments and Groups:
+
+                N a m e                 Size     Length   Align   Combine Class
+
+CODES  . . . . . . . . . . . . .	16 Bit	 0042	  Para	  Private 
+DATAS  . . . . . . . . . . . . .	16 Bit	 0037	  Para	  Private 
+
+
+Symbols:
+
+                N a m e                 Type     Value    Attr
+
+START  . . . . . . . . . . . . .	L Near	 0000	  CODES	
+addz . . . . . . . . . . . . . .	L Near	 0033	  CODES	
+msg1 . . . . . . . . . . . . . .	Byte	 0000	  DATAS	
+msg2 . . . . . . . . . . . . . .	Byte	 0015	  DATAS	
+next . . . . . . . . . . . . . .	L Near	 0025	  CODES	
+xx . . . . . . . . . . . . . . .	Byte	 0036	  DATAS	
+
+	   0 Warnings
+	   0 Errors

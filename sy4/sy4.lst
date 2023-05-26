@@ -1,0 +1,77 @@
+Microsoft (R) Macro Assembler Version 6.11		    05/26/23 00:22:59
+tempfile.asm						     Page 1 - 1
+
+
+ 0000				DATAS SEGMENT
+ 0000 D9 07 8B C5 EB 04		QMJ DB 0D9H,07H,8BH,0C5H,0EBH,04H,9DH,0F9H
+       9D F9
+ 0008				DATAS ENDS
+
+ 0000				CODES SEGMENT
+					ASSUME CS:CODES,DS:DATAS
+ 0000				START:
+ 0000  B8 ---- R			MOV AX,DATAS
+ 0003  8E D8			 	MOV DS,AX
+ 0005  B9 0008			    MOV CX,8
+ 0008  BE 0000				MOV SI,0
+ 000B  8A 3E 0000 R			MOV BH,QMJ
+ 000F  8A 1E 0000 R			MOV BL,QMJ
+ 0013				CMPP:	
+ 0013  3A BC 0000 R			CMP BH,QMJ[SI]
+ 0017  77 06				JA SMA
+ 0019  8A BC 0000 R			MOV BH,QMJ[SI]
+ 001D  EB 0A				JMP LOOPP
+ 001F				SMA:	
+ 001F  3A 9C 0000 R			CMP BL,QMJ[SI]
+ 0023  72 04				JB LOOPP 
+ 0025  8A 9C 0000 R			MOV BL,QMJ[SI]
+ 0029				LOOPP:
+ 0029  46				INC SI
+ 002A  E2 E7				LOOP CMPP
+ 002C  B5 04				MOV CH,4
+ 002E  B1 04				MOV CL,4
+ 0030				NEXT:
+ 0030  D3 C3				ROL BX,CL
+ 0032  8A D3				MOV DL,BL 
+ 0034  80 E2 0F				AND DL,0FH
+ 0037  80 C2 30			 	ADD DL,30H
+ 003A  80 FA 39			 	CMP DL,'9'
+ 003D  7E 03			 	JLE PRINT 
+ 003F  80 C2 07				ADD DL,07H
+ 0042				PRINT: 
+ 0042  B4 02			 	MOV AH,02H
+ 0044  CD 21			 	INT 21H
+ 0046  FE CD			 	DEC CH
+ 0048  75 E6				JNZ NEXT
+ 004A  B4 4C			    MOV AH,4CH
+ 004C  CD 21			    INT 21H	
+ 004E				CODES ENDS
+				    END START
+Microsoft (R) Macro Assembler Version 6.11		    05/26/23 00:22:59
+tempfile.asm						     Symbols 2 - 1
+
+
+
+
+Segments and Groups:
+
+                N a m e                 Size     Length   Align   Combine Class
+
+CODES  . . . . . . . . . . . . .	16 Bit	 004E	  Para	  Private 
+DATAS  . . . . . . . . . . . . .	16 Bit	 0008	  Para	  Private 
+
+
+Symbols:
+
+                N a m e                 Type     Value    Attr
+
+CMPP . . . . . . . . . . . . . .	L Near	 0013	  CODES	
+LOOPP  . . . . . . . . . . . . .	L Near	 0029	  CODES	
+NEXT . . . . . . . . . . . . . .	L Near	 0030	  CODES	
+PRINT  . . . . . . . . . . . . .	L Near	 0042	  CODES	
+QMJ  . . . . . . . . . . . . . .	Byte	 0000	  DATAS	
+SMA  . . . . . . . . . . . . . .	L Near	 001F	  CODES	
+START  . . . . . . . . . . . . .	L Near	 0000	  CODES	
+
+	   0 Warnings
+	   0 Errors
