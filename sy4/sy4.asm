@@ -1,57 +1,96 @@
-DATAS SEGMENT                   ; ���ݶο�ʼ
-    WYD DB 55H, 32H, 30H, 32H, 31H, 34H, 31H, 36H, 37H, 36H  ; ����һ���ֽ�����WYD����ʼ��
-DATAS ENDS                     ; ���ݶν���
+DATAS SEGMENT                   ; 数据段开始
+    WYD DB 55H, 32H, 30H, 32H, 31H, 34H, 31H, 36H, 37H, 36H  ; 定义一个字节数组WYD并初始化
+DATAS ENDS                     ; 数据段结束
 
-CODES SEGMENT                   ; ����ο�ʼ
-    ASSUME CS:CODES,DS:DATAS    ; ���ô���μĴ���CS�����ݶμĴ���DS�Ĺ���
+CODES SEGMENT                   ; 代码段开始
+    ASSUME CS:CODES,DS:DATAS    ; 设置代码段寄存器CS和数据段寄存器DS的关联
 
-START:                          ; �������
-    MOV AX,DATAS                ; �����ݶ�DATAS�Ļ���ַ���ص��Ĵ���AX��
-    MOV DS,AX                   ; ��AX�е�ֵ�������ݶλ���ַ���ƶ���DS�Ĵ�����
-    MOV CX,10                   ; ��10�洢��CX�Ĵ����У���ʾѭ������
-    MOV SI,0                    ; ��0�洢��SI�Ĵ����У���ΪWYD���������
-    MOV BH,WYD                  ; ��WYD����ĵ�һ��Ԫ�ص�ֵ�ƶ���BH�Ĵ�����
-    MOV BL,WYD                  ; ��WYD����ĵ�һ��Ԫ�ص�ֵ�ƶ���BL�Ĵ�����
+START:                          ; 程序入口
+    MOV AX,DATAS                ; 将数据段DATAS的基地址加载到寄存器AX中
+    MOV DS,AX                   ; 将AX中的值（即数据段基地址）移动到DS寄存器中
+    MOV CX,10                   ; 将10存储到CX寄存器中，表示循环次数
+    MOV SI,0                    ; 将0存储到SI寄存器中，作为WYD数组的索引
+    MOV BH,WYD                  ; 将WYD数组的第一个元素的值移动到BH寄存器中
+    MOV BL,WYD                  ; 将WYD数组的第一个元素的值移动到BL寄存器中
 
-CMPP:                           ; �Ƚ�ѭ���Ŀ�ʼ
-    CMP BH,WYD[SI]              ; ��BH�Ĵ�����ֵ��WYD��������ΪSI��Ԫ�ؽ��бȽ�
-    JA SMA                      ; ���BH����WYD[SI]������ת����ǩSMA
-    MOV BH,WYD[SI]              ; ��WYD[SI]��ֵ�ƶ���BH�Ĵ�����
-    JMP LOOPP                   ; ��������ת����ǩLOOPP
+CMPP:                           ; 比较循环的开始
+    CMP BH,WYD[SI]              ; 将BH寄存器的值与WYD数组索引为SI的元素进行比较
+    JA SMA                      ; 如果BH大于WYD[SI]，则跳转到标签SMA
+    MOV BH,WYD[SI]              ; 将WYD[SI]的值移动到BH寄存器中
+    JMP LOOPP                   ; 无条件跳转到标签LOOPP
 
-SMA:                            ; �������������JA����ִ�д˴��Ĵ���
-    CMP BL,WYD[SI]              ; ��BL�Ĵ�����ֵ��WYD��������ΪSI��Ԫ�ؽ��бȽ�
-    JB LOOPP                    ; ���BLС��WYD[SI]������ת����ǩLOOPP
-    MOV BL,WYD[SI]              ; ��WYD[SI]��ֵ�ƶ���BL�Ĵ�����
+SMA:                            ; 如果不满足条件JA，则执行此处的代码
+    CMP BL,WYD[SI]              ; 将BL寄存器的值与WYD数组索引为SI的元素进行比较
+    JB LOOPP                    ; 如果BL小于WYD[SI]，则跳转到标签LOOPP
+    MOV BL,WYD[SI]              ; 将WYD[SI]的值移动到BL寄存器中
 
-LOOPP:                          ; ѭ����ĩβ
-    INC SI                      ; ��SI�Ĵ�����ֵ��1��������һ��ѭ������WYD�����е���һ��Ԫ��
-    LOOP CMPP                   ; ѭ��������1�������Ϊ0������ת����ǩCMPP��������һ��ѭ���Ƚ�
+LOOPP:                          ; 循环的末尾
+    INC SI                      ; 将SI寄存器的值加1，用于下一次循环访问WYD数组中的下一个元素
+    LOOP CMPP                   ; 循环次数减1，如果不为0，则跳转到标签CMPP，进行下一次循环比较
 
-    MOV CH,4                    ; ��4�洢��CH�Ĵ�����
-    MOV CL,4                    ; ��4�洢��CL�Ĵ�����
+    MOV CH,4                    ; 将4存储到CH寄存器中
+    MOV CL,4                    ; 将4存储到CL寄存器中
 
-NEXT:                           ; ��һ������
-    ROL BX,CL                   ; ��BX�Ĵ�����ֵѭ������CLλ
-    MOV DL,BL                   ; ��BL�Ĵ�����ֵ�ƶ���DL�Ĵ�����
+NEXT:                           ; 下一步操作
+    ROL BX,CL                   ; 将BX寄存器的值循环左移CL位
+    MOV DL,BL                   ; 将BL寄存器的值移动到DL寄存器中
    
-    AND DL,0FH                ; ��DL�Ĵ�����0FH���а�λ�����㣬����λ���㣬������λ����ֵ
-    ADD DL,30H                ; ��DL�Ĵ�����ֵ����30H������ת��ΪASCII���ʾ���ַ�
-    CMP DL,'9'                ; ��DL�Ĵ�����ֵ���ַ�'9'���бȽ�
-    JLE PRINT                 ; ���DLС�ڵ���'9'������ת����ǩPRINT
+    AND DL,0FH                ; 将DL寄存器与0FH进行按位与运算，将高位清零，保留低位的数值
+    ADD DL,30H                ; 将DL寄存器的值加上30H，将其转换为ASCII码表示的字符
+    CMP DL,'9'                ; 将DL寄存器的值与字符'9'进行比较
+    JLE PRINT                 ; 如果DL小于等于'9'，则跳转到标签PRINT
 
-    ADD DL,07H                ; ���DL����'9'�������07H��ת��Ϊ��д��ĸ�ַ�
+    ADD DL,07H                ; 如果DL大于'9'，则加上07H，转换为大写字母字符
 
-PRINT:                       ; ����ַ�
-    MOV AH,02H                ; ��02H�洢��AH�Ĵ����У���ʾҪ�����ַ�����Ĺ���
-    INT 21H                   ; ����21H�жϣ�ִ���ַ��������
+PRINT:                       ; 输出字符
+    MOV AH,02H                ; 将02H存储到AH寄存器中，表示要进行字符输出的功能
+    INT 21H                   ; 调用21H中断，执行字符输出功能
 
-    DEC CH                    ; CH�Ĵ�����1
-    JNZ NEXT                  ; ���CH��Ϊ0������ת����ǩNEXT��������һ��ѭ������
+    DEC CH                    ; CH寄存器减1
+    JNZ NEXT                  ; 如果CH不为0，则跳转到标签NEXT，进行下一次循环操作
 
-    MOV AH,4CH                ; ��4CH�洢��AH�Ĵ����У���ʾ��������Ĺ���
-    INT 21H                   ; ����21H�жϣ���������
+    MOV AH,4CH                ; 将4CH存储到AH寄存器中，表示程序结束的功能
+    INT 21H                   ; 调用21H中断，结束程序
 
-CODES ENDS                   ; ����ν���
-END START                    ; �������
+CODES ENDS                   ; 代码段结束
+END START                    ; 程序结束
+
+；#2
+
+DATAS SEGMENT                   ; 数据段开始
+    WYD DB 55H, 32H, 30H, 32H, 31H, 34H, 31H, 36H, 37H, 36H  ; 定义一个字节数组WYD并初始化
+DATAS ENDS                     ; 数据段结束
+
+RESULT SEGMENT                  ; 结果段开始
+    MAX_MSG DB 'The Max is: $'  ; 最大值的消息
+    MIN_MSG DB 'The Min is: $'  ; 最小值的消息
+    MAX_NUM DB ?                 ; 存储最大值
+    MIN_NUM DB ?                 ; 存储最小值
+RESULT ENDS                     ; 结果段结束
+
+CODES SEGMENT                   ; 代码段开始
+    ASSUME CS:CODES,DS:DATAS,ES:RESULT  ; 设置代码段寄存器CS、数据段寄存器DS和结果段寄存器ES的关联
+
+START:                          ; 程序入口
+    MOV AX,DATAS                ; 将数据段DATAS的基地址加载到寄存器AX中
+    MOV DS,AX                   ; 将AX中的值（即数据段基地址）移动到DS寄存器中
+    MOV CX,10                   ; 将10存储到CX寄存器中，表示循环次数
+    MOV SI,0                    ; 将0存储到SI寄存器中，作为WYD数组的索引
+    MOV BH,WYD                  ; 将WYD数组的第一个元素的值移动到BH寄存器中
+    MOV BL,WYD                  ; 将WYD数组的第一个元素的值移动到BL寄存器中
+
+CMPP:                           ; 比较循环的开始
+    CMP BH,WYD[SI]              ; 将BH寄存器的值与WYD数组索引为SI的元素进行比较
+    JA SMA                      ; 如果BH大于WYD[SI]，则跳转到标签SMA
+    MOV BH,WYD[SI]              ; 将WYD[SI]的值移动到BH寄存器中
+    JMP LOOPP                   ; 无条件跳转到标签LOOPP
+
+SMA:                            ; 如果不满足条件JA，则执行此处的代码
+    CMP BL,WYD[SI]              ; 将BL寄存器的值与WYD数组索引为SI的元素进行比较
+    JB LOOPP                    ; 如果BL小于WYD[SI]，则跳转到标签LOOPP
+    MOV BL,WYD[SI]              ; 将WYD[SI]的值移动到BL寄存器中
+
+LOOPP:                          ; 循环的末尾
+    INC SI                      ; 将SI寄存器的值加1，用于下一次循环访问WYD数组中的下一个元素
+    LOOP CMPP                   ; 循环次数减1，如果不为0，则跳转到
 
